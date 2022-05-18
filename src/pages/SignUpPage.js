@@ -2,14 +2,14 @@ import { Component } from "react";
 
 class SignUpPage extends Component {
   state = {
-    disabled: true,
+      password: '', // we can have this set to empty just for reference
+      passwordRepeat: '', // we can have this set to empty just for reference
   };
 
   onChangePassword = (event) => {
       const currentValue = event.target.value
       this.setState({
           password: currentValue,
-          disabled: currentValue !== this.state.passwordRepeat
       })
   }
 
@@ -17,12 +17,16 @@ class SignUpPage extends Component {
       const currentValue = event.target.value
       this.setState({
           passwordRepeat: currentValue,
-          disabled: currentValue !== this.state.password
       })
   }
 
   render() {
-    return (
+      let disabled = true;
+      const { password, passwordRepeat } = this.state;
+      if (password && passwordRepeat) {
+          disabled = password !== passwordRepeat;
+      }
+      return (
       <div>
         <h1>Sign Up</h1>;<label htmlFor="username">Username</label>
         <input id="username" />
@@ -32,7 +36,7 @@ class SignUpPage extends Component {
         <input id="password" type="password" onChange={this.onChangePassword} />
         <label htmlFor="passwordRepeat">Password Repeat</label>
         <input id="passwordRepeat" type="password" onChange={this.onChangePasswordRepeat} />
-        <button disabled={this.state.disabled}>Sign Up</button>
+        <button disabled={disabled}>Sign Up</button>
       </div>
     );
   }
