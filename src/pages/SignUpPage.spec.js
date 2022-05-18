@@ -18,6 +18,11 @@ describe("Sign Up Page", () => {
     const input = screen.getByLabelText("E-mail")
     expect(input).toBeInTheDocument();
   });
+  it("has password input", () => {
+    render(<SignUpPage />);
+    const input = screen.getByLabelText("Password")
+    expect(input).toBeInTheDocument();
+  });
   it("has password type for password input", () => {
     render(<SignUpPage />);
     const input = screen.getByLabelText("Password")
