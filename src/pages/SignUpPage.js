@@ -9,31 +9,12 @@ class SignUpPage extends Component {
     passwordRepeat: "", // we can have this set to empty just for reference
   };
 
-  onChangeUsername = (event) => {
-    const currentValue = event.target.value;
-    this.setState({
-      username: currentValue,
-    });
-  };
-  onChangeEmail = (event) => {
-    const currentValue = event.target.value;
-    this.setState({
-      email: currentValue,
-    });
-  };
-  onChangePassword = (event) => {
-    const currentValue = event.target.value;
-    this.setState({
-      password: currentValue,
-    });
-  };
-
-  onChangePasswordRepeat = (event) => {
-    const currentValue = event.target.value;
-    this.setState({
-      passwordRepeat: currentValue,
-    });
-  };
+  onChange = (event) => {
+      const { id, value } = event.target; // destructuring the event.target into id and value
+      this.setState({ // setting the state values of the "id's"
+          [id]: value // to the value from the onChange event (aka. user's input)
+      })
+  }
 
   submit = (event) => {
     event.preventDefault()
@@ -43,7 +24,14 @@ class SignUpPage extends Component {
       email,
       password,
     };
-    axios.post("/api/1.0/users", body);
+    // axios.post("/api/1.0/users", body);
+    fetch("/api/1.0/users", {
+        method: 'POST',
+        header: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+    })
   };
 
   render() {
@@ -56,20 +44,20 @@ class SignUpPage extends Component {
       <div>
         <form>
           <h1>Sign Up</h1>;<label htmlFor="username">Username</label>
-          <input id="username" onChange={this.onChangeUsername} />
+          <input id="username" onChange={this.onChange} />
           <label htmlFor="email">E-mail</label>
-          <input id="email" onChange={this.onChangeEmail} />
+          <input id="email" onChange={this.onChange} />
           <label htmlFor="password">Password</label>
           <input
             id="password"
             type="password"
-            onChange={this.onChangePassword}
+            onChange={this.onChange}
           />
           <label htmlFor="passwordRepeat">Password Repeat</label>
           <input
             id="passwordRepeat"
             type="password"
-            onChange={this.onChangePasswordRepeat}
+            onChange={this.onChange}
           />
           <button onClick={this.submit} disabled={disabled}>
             Sign Up
