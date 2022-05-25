@@ -109,7 +109,7 @@ describe("Sign Up Page", () => {
       userEvent.click(button);
       userEvent.click(button);
 
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await screen.findByText("Please check your email to activate your account")
 
       expect(counter).toBe(1);
     });
