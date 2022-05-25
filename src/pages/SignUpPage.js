@@ -8,6 +8,7 @@ class SignUpPage extends Component {
     password: "", // we can have this set to empty just for reference
     passwordRepeat: "", // we can have this set to empty just for reference
     apiProgress: false,
+    signUpSuccess: false,
   };
 
   onChange = (event) => {
@@ -27,12 +28,14 @@ class SignUpPage extends Component {
       password,
     };
     this.setState({ apiProgress: true });
-    axios.post("/api/1.0/users", body);
+    axios.post("/api/1.0/users", body).then(() => {
+        this.setState({signUpSuccess: true})
+    });
   };
 
   render() {
     let disabled = true;
-    const { password, passwordRepeat, apiProgress } = this.state;
+    const { password, passwordRepeat, apiProgress, signUpSuccess } = this.state;
     if (password && passwordRepeat) {
       disabled = password !== passwordRepeat;
     }
@@ -94,6 +97,7 @@ class SignUpPage extends Component {
             </div>
           </div>
         </form>
+        {signUpSuccess && <div className="alert alert-success mt-3" >Please check your email to activate your account</div>}
       </div>
     );
   }
