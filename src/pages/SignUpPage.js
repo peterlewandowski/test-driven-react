@@ -41,7 +41,7 @@ class SignUpPage extends Component {
     }
     return (
       <div className="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
-        <form className="card mt-5">
+        {!signUpSuccess && <form className="card mt-5" data-testid="form-sign-up">
           <div className="card-header">
             <h1 className="text-center">Sign Up</h1>
           </div>
@@ -96,7 +96,7 @@ class SignUpPage extends Component {
               </button>
             </div>
           </div>
-        </form>
+        </form>}
         {signUpSuccess && <div className="alert alert-success mt-3" >Please check your email to activate your account</div>}
       </div>
     );
