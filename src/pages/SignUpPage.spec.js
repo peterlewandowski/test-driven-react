@@ -51,21 +51,20 @@ describe("Sign Up Page", () => {
     expect(button).toBeDisabled();
   });
   describe("Interactions", () => {
+    let button;
 
-    let button
-    
     const setup = () => {
-        render(<SignUpPage />);
-        const usernameInput = screen.getByLabelText("Username");
-        const emailInput = screen.getByLabelText("E-mail");
-        const passwordInput = screen.getByLabelText("Password");
-        const passwordRepeatInput = screen.getByLabelText("Password Repeat");
-        userEvent.type(usernameInput, "user1");
-        userEvent.type(emailInput, "user1@mail.com");
-        userEvent.type(passwordInput, "P4ssword");
-        userEvent.type(passwordRepeatInput, "P4ssword");
-        button = screen.queryByRole("button", { name: "Sign Up" });
-    }
+      render(<SignUpPage />);
+      const usernameInput = screen.getByLabelText("Username");
+      const emailInput = screen.getByLabelText("E-mail");
+      const passwordInput = screen.getByLabelText("Password");
+      const passwordRepeatInput = screen.getByLabelText("Password Repeat");
+      userEvent.type(usernameInput, "user1");
+      userEvent.type(emailInput, "user1@mail.com");
+      userEvent.type(passwordInput, "P4ssword");
+      userEvent.type(passwordRepeatInput, "P4ssword");
+      button = screen.queryByRole("button", { name: "Sign Up" });
+    };
 
     it("enables the button when password and password repeat fields have the same value", () => {
       render(<SignUpPage />);
@@ -85,7 +84,7 @@ describe("Sign Up Page", () => {
         })
       );
       server.listen();
-      setup()
+      setup();
       userEvent.click(button);
 
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -106,13 +105,27 @@ describe("Sign Up Page", () => {
         })
       );
       server.listen();
-      setup()
+      setup();
       userEvent.click(button);
       userEvent.click(button);
 
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       expect(counter).toBe(1);
+    });
+
+    it("displays spinner after clicking the submit", async () => {
+      const server = setupServer(
+        rest.post("/api/1.0/users", (req, res, ctx) => {
+          return res(ctx.status(200));
+        })
+      );
+      server.listen();
+      setup();
+      expect(screen.queryByRole("status")).not.toBeInTheDocument();
+      userEvent.click(button);
+      const spinner = screen.getByRole("status");
+      expect(spinner).toBeInTheDocument();
     });
   });
 });
