@@ -51,6 +51,22 @@ describe("Sign Up Page", () => {
     expect(button).toBeDisabled();
   });
   describe("Interactions", () => {
+
+    let button
+    
+    const setup = () => {
+        render(<SignUpPage />);
+        const usernameInput = screen.getByLabelText("Username");
+        const emailInput = screen.getByLabelText("E-mail");
+        const passwordInput = screen.getByLabelText("Password");
+        const passwordRepeatInput = screen.getByLabelText("Password Repeat");
+        userEvent.type(usernameInput, "user1");
+        userEvent.type(emailInput, "user1@mail.com");
+        userEvent.type(passwordInput, "P4ssword");
+        userEvent.type(passwordRepeatInput, "P4ssword");
+        button = screen.queryByRole("button", { name: "Sign Up" });
+    }
+
     it("enables the button when password and password repeat fields have the same value", () => {
       render(<SignUpPage />);
       const passwordInput = screen.getByLabelText("Password");
@@ -69,25 +85,34 @@ describe("Sign Up Page", () => {
         })
       );
       server.listen();
-      render(<SignUpPage />);
-      const usernameInput = screen.getByLabelText("Username");
-      const emailInput = screen.getByLabelText("E-mail");
-      const passwordInput = screen.getByLabelText("Password");
-      const passwordRepeatInput = screen.getByLabelText("Password Repeat");
-      userEvent.type(usernameInput, "user1");
-      userEvent.type(emailInput, "user1@mail.com");
-      userEvent.type(passwordInput, "P4ssword");
-      userEvent.type(passwordRepeatInput, "P4ssword");
-      const button = screen.queryByRole("button", { name: "Sign Up" });
+      setup()
       userEvent.click(button);
 
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      expect(requestBody).toEqual({ //make sure that the request body and response body is either: both stringified or parsed
+      expect(requestBody).toEqual({
+        //make sure that the request body and response body is either: both stringified or parsed
         username: "user1",
         email: "user1@mail.com",
         password: "P4ssword",
       });
+    });
+    it("disables button when there is an ongoing api call", async () => {
+      let counter = 0;
+      const server = setupServer(
+        rest.post("/api/1.0/users", (req, res, ctx) => {
+          counter += 1;
+          return res(ctx.status(200));
+        })
+      );
+      server.listen();
+      setup()
+      userEvent.click(button);
+      userEvent.click(button);
+
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      expect(counter).toBe(1);
     });
   });
 });
