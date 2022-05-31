@@ -15,9 +15,13 @@ class SignUpPage extends Component {
 
   onChange = (event) => {
     const { id, value } = event.target; // destructuring the event.target into id and value
+    
+    const errorsCopy = {...this.state.errors} // when modifying a state object {errors}, we need to take a copy of it
+    delete errorsCopy[id] // we then take out the corresponding id of the input (ie. id="username") 
     this.setState({
       // setting the state values of the "id's"
       [id]: value, // to the value from the onChange event (aka. user's input)
+      errors: errorsCopy // we then update the state to only the input id's still showing an error
     });
   };
 
