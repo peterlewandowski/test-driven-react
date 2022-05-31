@@ -12,7 +12,7 @@ const Input = (props) => {
         {label}
       </label>
       <input id={id} className={inputClass} onChange={onChange} type={type || "text"} />
-      <span className="invalid-feedback">{help}</span>
+      {help && <span className="invalid-feedback">{help}</span>}
     </div>
   );
 };
