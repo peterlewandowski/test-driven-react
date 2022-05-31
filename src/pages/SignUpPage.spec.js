@@ -70,7 +70,7 @@ describe("Sign Up Page", () => {
 
     afterAll(() => server.close());
 
-    let button, usernameInput, emailInput, passwordInput, passwordRepeatInput
+    let button, usernameInput, emailInput, passwordInput, passwordRepeatInput;
 
     const setup = () => {
       render(<SignUpPage />);
@@ -187,18 +187,24 @@ describe("Sign Up Page", () => {
       setup();
       userEvent.type(passwordInput, "P4ssword");
       userEvent.type(passwordRepeatInput, "AnotherP4ssword");
-      const validationError = screen.queryByText('Password mismatch')
-      expect(validationError).toBeInTheDocument()
+      const validationError = screen.queryByText("Password mismatch");
+      expect(validationError).toBeInTheDocument();
     });
-    it("clears validation error after username field is updated", async () => {
-        server.use(
-          generateValidationError("username", "Username cannot be null")
-        );
+    it.each`
+      field         | message                      | label
+      ${"username"} | ${"Username cannot be null"} | ${"Username"}
+      ${"email"}    | ${"E-mail cannot be null"}   | ${"E-mail"}
+      ${"password"} | ${"Password cannot be null"} | ${"Password"}
+    `(
+      "clears validation error after $field field is updated",
+      async ({ field, message, label }) => {
+        server.use(generateValidationError(field, message));
         setup();
         userEvent.click(button);
-        const validationError = await screen.findByText("Username cannot be null");
-        userEvent.type(usernameInput, 'user1-updated')
-        expect(validationError).not.toBeInTheDocument()
-      });
+        const validationError = await screen.findByText(message);
+        userEvent.type(screen.getByLabelText(label), "updated");
+        expect(validationError).not.toBeInTheDocument();
+      }
+    );
   });
 });
